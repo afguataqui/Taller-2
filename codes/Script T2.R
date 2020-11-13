@@ -15,9 +15,9 @@ download.file(url = "https://github.com/taller-R/task-2/archive/main.zip",
 #Descomprimir
 unzip(zipfile = "Taller_2.zip")
 
-setwd("~/Desktop/R/Tasks/task-2-main/")
+setwd("~/Desktop/R/Tasks/taller-2/")
+list.files()
 options("scipen"=100, "digits"=4) # Forzar a R a no usar e+
-################################EMPALMAR################
 
 #### Librerias
 paquetes = c('tidyverse','haven')
@@ -34,7 +34,6 @@ f_read = function(path){
          colnames(data) = tolower(colnames(data))
          return(data)
 }
-lista_archivos
 #### Aplicar la funcion
 lista_archivos = files[c(grep('Cabecera',files),grep('Resto',files))] %>% 
                   .[c(grep('Caracter',.),grep('Desocupados',.),grep('Inactivos',.),grep('Ocupados',.),grep('Fuerza',.))]
