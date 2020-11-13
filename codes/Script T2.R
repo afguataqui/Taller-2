@@ -39,23 +39,36 @@ lista_archivos = files[c(grep('Cabecera',files),grep('Resto',files))] %>%
                   .[c(grep('Caracter',.),grep('Desocupados',.),grep('Inactivos',.),grep('Ocupados',.),grep('Fuerza',.))]
 
 lista_data = lapply(lista_archivos, function(x) f_read(path = x))
-grep('Cabecera - Cara',lista_archivos)
+###grep a utilizar
+lista_archivos
+grep('Cabecera - Cara',lista_archivos) ##1-12
+grep('Resto - Cara',lista_archivos)  ##13-24
+grep('Cabecera - Desocu',lista_archivos) ##25-36
+grep('Resto - Desocu',lista_archivos) ##37-48
+grep('Cabecera - Inact',lista_archivos) ##49-60
+grep('Resto - Inact',lista_archivos) ##61-72
+grep('Cabecera - Ocupado',lista_archivos) ##73-84
+grep('Resto - Ocupado',lista_archivos) ##85-96
+grep('Cabecera - Fuerza',lista_archivos) ##97-108
+grep('Resto - Fuerza',lista_archivos) ##109-120
 #### Crear objetos por modulo
-caracte_u = lista_data[1:12] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1)
-caracte_r = lista_data[13:24] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0)
+caracte_u = lista_data[grep('Cabecera - Cara',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1)
+caracte_r = lista_data[grep('Resto - Cara',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0)
 caracte = plyr::rbind.fill(caracte_u,caracte_r)
 
-desocupado = plyr::rbind.fill(lista_data[25:36] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
-                           lista_data[37:48] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
+desocupado = plyr::rbind.fill(lista_data[grep('Cabecera - Desocu',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
+                           lista_data[grep('Resto - Desocu',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
 
-inactivo = plyr::rbind.fill(lista_data[49:60] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
-                           lista_data[61:72] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
+inactivo = plyr::rbind.fill(lista_data[grep('Cabecera - Inact',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
+                           lista_data[grep('Resto - Inact',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
 
-ocupado = plyr::rbind.fill(lista_data[73:84] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
-                           lista_data[85:96] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
+ocupado = plyr::rbind.fill(lista_data[grep('Cabecera - Ocupado',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
+                           lista_data[grep('Resto - Ocupado',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
 
-fuerza = plyr::rbind.fill(lista_data[97:108] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
-                          lista_data[109:120] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
+fuerza = plyr::rbind.fill(lista_data[grep('Cabecera - Fuerza',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
+                          lista_data[grep('Resto - Fuerza',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
+#Borrar los que no se van a utilizar 
+rm(caracte_r, caracte_u)
 
 
 
