@@ -1,3 +1,6 @@
+#####TALLER 2 #####
+#Andres Felipe Guatqui Delgado Codigo: 201631256
+#1.1 
 #Eliminar Enviroment
 rm(list=ls())
 
@@ -22,7 +25,7 @@ options("scipen"=100, "digits"=4) # Forzar a R a no usar e+
 #### Librerias
 paquetes = c('tidyverse','haven')
 sapply(paquetes,require,character.only=T) 
-
+#1.2
 #### Crear un vector con los nombres de los archivos
 meses = list.files('data/orignal/2019') %>% paste0('data/orignal/2019/',.,'/')
 files = lapply(1:length(meses),function(x) list.files(meses[x]) %>% paste0(meses[x],.))  %>% unlist()
@@ -39,7 +42,7 @@ lista_archivos = files[c(grep('Cabecera',files),grep('Resto',files))] %>%
                   .[c(grep('Caracter',.),grep('Desocupados',.),grep('Inactivos',.),grep('Ocupados',.),grep('Fuerza',.))]
 
 lista_data = lapply(lista_archivos, function(x) f_read(path = x))
-###grep a utilizar
+###grep a utilizar para crear los objetos
 lista_archivos
 grep('Cabecera - Cara',lista_archivos) ##1-12
 grep('Resto - Cara',lista_archivos)  ##13-24
@@ -52,10 +55,11 @@ grep('Resto - Ocupado',lista_archivos) ##85-96
 grep('Cabecera - Fuerza',lista_archivos) ##97-108
 grep('Resto - Fuerza',lista_archivos) ##109-120
 #### Crear objetos por modulo
+#Crear individualmente y luego unirlos
 caracte_u = lista_data[grep('Cabecera - Cara',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1)
 caracte_r = lista_data[grep('Resto - Cara',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0)
 caracte = plyr::rbind.fill(caracte_u,caracte_r)
-
+#Crear urbano y resto con el mismo codigo
 desocupado = plyr::rbind.fill(lista_data[grep('Cabecera - Desocu',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
                            lista_data[grep('Resto - Desocu',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
 
@@ -68,8 +72,19 @@ ocupado = plyr::rbind.fill(lista_data[grep('Cabecera - Ocupado',lista_archivos)]
 fuerza = plyr::rbind.fill(lista_data[grep('Cabecera - Fuerza',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 1),
                           lista_data[grep('Resto - Fuerza',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
 #Borrar los que no se van a utilizar 
-rm(caracte_r, caracte_u)
+rm(caracte_r, caracte_u, files, lista_archivos, lista_data, meses, paquetes, f_read)
+rm(GEIH_2019)
+#1.3 
+GEIH_2019 = merge(caracte, desocupado ,by = c('secuencia_p', 'orden', 'directorio'), all.x = T) %>%
+  merge(., fuerza ,by= c('secuencia_p', 'orden', 'directorio'), all.x =T) %>%
+  merge(., ocupado,by= c('secuencia_p', 'orden', 'directorio'), all =T) %>% #problemas con Ocupado e Inactivo
+  merge(., inactivo,by= c('secuencia_p', 'orden', 'directorio'), all =T) 
 
+#1.4
+
+
+
+#2
 
 
 
