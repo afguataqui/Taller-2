@@ -23,7 +23,7 @@ list.files()
 options("scipen"=100, "digits"=4) # Forzar a R a no usar e+
 
 #### Librerias
-paquetes = c('tidyverse','haven')
+paquetes = c('tidyverse','haven', 'sf', 'grid')
 sapply(paquetes,require,character.only=T) 
 #1.2
 #### Crear un vector con los nombres de los archivos
@@ -73,7 +73,7 @@ fuerza = plyr::rbind.fill(lista_data[grep('Cabecera - Fuerza',lista_archivos)] %
                           lista_data[grep('Resto - Fuerza',lista_archivos)] %>% data.table::rbindlist(use.names = T,fill = T) %>% mutate(urbano = 0))
 #Borrar los que no se van a utilizar 
 rm(caracte_r, caracte_u, files, lista_archivos, lista_data, meses, paquetes, f_read)
-rm(GEIH_2019)
+
 #1.3 
 GEIH_2019 = merge(caracte, desocupado ,by = c('secuencia_p', 'orden', 'directorio'), all.x = T) %>%
   merge(., fuerza ,by= c('secuencia_p', 'orden', 'directorio'), all.x =T) %>%
@@ -83,8 +83,12 @@ GEIH_2019 = merge(caracte, desocupado ,by = c('secuencia_p', 'orden', 'directori
 #1.4
 
 
-
 #2
+#Importar shapefile
+Dptos = st_read(dsn = 'data/orignal/MGN_DPTO_POLITICO.shp')
+
+
+
 
 
 
