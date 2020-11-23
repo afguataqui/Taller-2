@@ -108,21 +108,75 @@ class(GEIH_2019$p6160)
 t_alfabeta= GEIH_2019 %>% group_by(dpto, p6160) %>% summarise(n_p=sum(peso)) #PROBLEMA: Crea variable de 1obs 
 t_alfabeta= GEIH_2019 %>% group_by(dpto, p6160) %>% summarise(n_p= sum(peso)) %>%
   reshape2::dcast(.,dpto~p6160)
-colnames(t_falbeta) = c('dpto','sabe_le','no_sabe_le') 
-t_falbeta = mutate(t_falbeta , tasa = no_sabe_le/(no_sabe_le+sabe_le)*100)
+colnames(t_alfalbeta) = c('dpto','sabe_le','no_sabe_le') 
+t_alfalbeta = mutate(t_falbeta , tasa = no_sabe_le/(no_sabe_le+sabe_le)*100)
+##Grafica y exportar jpeg
+getwd()
+jpeg("/Users/andresguataqui/Desktop/R/Tasks/Taller-2/data/procesada/Tasa_alfabeta.jpeg")
+t_alfalbeta %>%
+  mutate(name = fct_reorder(as.character(dpto), tasa)) %>%
+  ggplot( aes(x=as.character(dpto), y=tasa)) +
+  geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+dev.off()
 #Tasa graduados educacion superior
 ##P6269 variable que pregunta: ¿Se graduo usted de una escuela normal superior?
-
+t_graduados= GEIH_2019 %>% group_by(dpto, p6269) %>% summarise(n_p=sum(peso))
+t_graduados= GEIH_2019 %>% group_by(dpto, p6269) %>% summarise(n_p= sum(peso)) %>%
+  reshape2::dcast(.,dpto~p6269)
+colnames(t_graduados) = c('dpto','graduado','no_graduado')
+t_graduados = mutate(t_graduados , tasa = graduado/(no_graduado+graduado)*100)
+##Grafica y exportar jpeg
+getwd()
+jpeg("/Users/andresguataqui/Desktop/R/Tasks/Taller-2/data/procesada/Tasa_graduados.jpeg")
+t_graduados %>%
+  mutate(name = fct_reorder(as.character(dpto), tasa)) %>%
+  ggplot( aes(x=as.character(dpto), y=tasa)) +
+  geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+dev.off()
 #Ingresos laborales
 ##inglabo variable que pregunta por los ingresos laborales
-
-
+t_ingreso= GEIH_2019 %>% group_by(dpto, inglabo) %>% summarise(n_p=sum(peso))
+t_ingreso= GEIH_2019 %>% group_by(dpto, inglabo) %>% summarise(n_p= sum(peso)) %>%
+  reshape2::dcast(.,dpto~inglabo)
+colnames(t_ingreso) = c('dpto','ingreso')
+##Grafica y exportar jpeg
+getwd()
+jpeg("/Users/andresguataqui/Desktop/R/Tasks/Taller-2/data/procesada/ingresos.jpeg")
+t_ingreso %>%
+  mutate(name = fct_reorder(as.character(dpto), ingreso)) %>%
+  ggplot( aes(x=as.character(dpto), y=ingreso)) +
+  geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+dev.off()
 #2
 ##Importar shapefile
 Dptos = st_read(dsn = 'data/orignal/MGN_DPTO_POLITICO.shp')
 str(Dptos)
+str(t_alfalbeta)
 
+Dptos = mutate(Dptos, dpto = as.numeric(as.character(DPTO_CCDGO))) # Crear variable dpto 
+mapa_alfabeta = merge(Dptos,t_alfalbeta,'dpto',all.x=T)  #pegar variable a pintar
+#Pintar grafico
+jpeg("/Users/andresguataqui/Desktop/R/Tasks/Taller-2/data/procesada/dptos_alfabeta.jpeg")
+ggplot() + geom_sf(data = mapa_alfabeta,aes(fill=tasa),col='blue')
+dev.off()
 
+mapa_graduado = merge(Dptos,t_graduados,'dpto',all.x=T)  #pegar variable a pintar
+jpeg("/Users/andresguataqui/Desktop/R/Tasks/Taller-2/data/procesada/dptos_graduados.jpeg")
+ggplot() + geom_sf(data = mapa_graduado,aes(fill=tasa),col='black')
+dev.off()
 
+mapa_ingresos = merge(Dptos,t_ingreso,'dpto',all.x=T)  #pegar variable a pintar
+jpeg("/Users/andresguataqui/Desktop/R/Tasks/Taller-2/data/procesada/dptos_ingresos.jpeg")
+ggplot() + geom_sf(data = mapa_ingresos,aes(fill=tasa),col='green')
+dev.off()
 
 
